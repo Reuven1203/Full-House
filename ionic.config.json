@@ -1,0 +1,7 @@
+{
+  "name": "full-house",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
