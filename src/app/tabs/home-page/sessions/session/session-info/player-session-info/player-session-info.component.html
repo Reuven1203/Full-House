@@ -1,0 +1,29 @@
+<div class="flex items-center w-full">
+  <div class="space-x-1 flex items-center w-[75px] py-2">
+    <ion-avatar class="h-[20px] w-[20px] rounded-[50%]" slot="start">
+      <img class="h-[20px] w-[20px] rounded-[50%]" alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+    </ion-avatar>
+    <ion-label>
+      {{player && player.name}}
+    </ion-label>
+  </div>
+  <div class="flex text-right justify-between ml-6 items-center">
+    <ion-label class="flex items-center text-center">
+      <app-value-chip (blurEvent)="calculateNet()"  [(value)]="buyIn" (valueChange)="buyInChanged($event)" />
+    </ion-label>
+    <ion-label class="flex items-center  ml-[30px]">
+      <app-value-chip (blurEvent)="calculateNet()" [(value)]="cashOut" (valueChange)="cashOutChanged($event)" />
+    </ion-label>
+      <ion-label class="ml-3 pl-2" [color]="net < 0 ? 'danger' : 'success'">{{net}}</ion-label>
+  </div>
+</div>
+
+<!--</app-list-item>-->
+
+
+
+
+
+
+
+

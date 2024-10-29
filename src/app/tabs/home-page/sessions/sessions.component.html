@@ -1,0 +1,13 @@
+<ion-label class="text-white font-bold text-[20px]">Recent sessions</ion-label>
+<ion-content class=" ion-padding-0 h-[500px]"  >
+    @for (session of sessions;track session.id) {
+      <a class="mt-3" [routerLink]="[session.id]">
+        <app-session
+          (sessionClicked)="onSessionClick($event)"
+          [session]="session">
+        </app-session>
+      </a>
+    }
+</ion-content>
+
+

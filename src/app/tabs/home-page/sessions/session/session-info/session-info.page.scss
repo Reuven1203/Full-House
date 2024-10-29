@@ -1,0 +1,51 @@
+// Define reusable variables for consistent spacing and border styling
+$margin-top-small: 4px;
+$border-radius: 7px;
+
+// Set the background for ion-toolbar within ion-header
+ion-header {
+  ion-toolbar {
+    --background: var(--ion-color-tertiary);
+  }
+}
+
+// iOS-specific styling for ion-header and ion-toolbar
+.ios ion-header {
+  .ios ion-toolbar {
+    --background: var(--ion-color-secondary);
+    height: 300px;
+  }
+}
+
+// Customize ion-back-button styles
+ion-back-button {
+  --color: var(--ion-color-primary);
+  font-size: 25px;
+}
+
+// Styling for .player-session, with iOS-specific adjustments
+.ios .player-session {
+  --background: var(--ion-color-primary);
+  display: flex;
+  flex-direction: row;
+  border-top-left-radius: $border-radius;
+  border-bottom-left-radius: $border-radius;
+  justify-items: center;
+  // Uncomment if needed: margin-top: $margin-top-small;
+  border-bottom: 0;
+}
+
+// Active state for .player-session
+.player-session:active {
+  --background: var(--ion-color-primary-shade);
+}
+
+// Apply consistent margin-top for ion-item-sliding elements
+ion-item-sliding {
+  margin-top: $margin-top-small;
+}
+
+ion-item-option {
+  border-radius: 7px;
+
+}

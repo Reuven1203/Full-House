@@ -1,0 +1,22 @@
+<ng-template>
+<ion-header id="header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button color="danger" (click)="onCancelClick()">Cancel</ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button color="secondary"  [strong]="true">Start</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [scrollY]="false" id="content" class="ion-padding" [fullscreen]="true" >
+  <div>
+    <ion-toggle color="secondary" checked="true" slot="start"></ion-toggle>
+    <app-game-info-form [FormGroup]="newSessionForm"/>
+  </div>
+  <div class="mt-3">
+    <app-add-players-form [FormGroup]="newSessionForm"/>
+  </div>
+</ion-content>
+</ng-template>

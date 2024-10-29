@@ -1,0 +1,21 @@
+<div  class="mt-2  p-3 rounded-[7px] bg-primary flex" >
+  <div class="flex items-center space-x-1 w-1/2">
+    <ion-icon slot="start" [name]="sessionService.isCashGameModel(session.type) ? 'triangle' : 'square'" color="secondary"  />
+    @if (sessionService.isCashGameModel(session.type)) {
+      <ion-text class="font-bold text-[12px]" >{{session.type.blinds.join(' / ')}} {{session.gameType}}</ion-text>
+    }@else{
+      <ion-text class="font-bold text-[12px]">{{session.type.name}}</ion-text>
+    }
+  </div>
+  <div class=" flex justify-end  items-center w-1/2 space-x-2">
+    <div class="flex flex-col justify-end items-end">
+      <ion-text class="font-bold text-[8px]">{{session.startDate | date:'dd/mm/yyyy'}}
+        {{sessionService.isCashGameModel(session.type) ? '' : '-' + (session.endDate | date:'dd/mm/yyyy' )}}</ion-text>
+      <ion-text class="text-[8px]">$355</ion-text>
+    </div>
+    <div class="flex items-center space-x-0.5 text-xs">
+      <ion-icon  name="person"/>
+      <ion-text >{{session.players.length}}</ion-text>
+    </div>
+  </div>
+</div>

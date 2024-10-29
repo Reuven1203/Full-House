@@ -1,0 +1,6 @@
+:host {
+  ::ng-deep ion-tab-bar {
+    --background: var(--ion-color-background); /* Set background color */
+    --color: var(--ion-color-primary-contrast); /* Set text/icon color */
+  }
+}

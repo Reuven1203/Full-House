@@ -1,0 +1,17 @@
+<ion-content class="ion-padding ion-page" [scrollY]="false"  [fullscreen]="true">
+  <ion-list lines="none">
+    <ion-list-header>
+      <ion-label class="font-bold text-white text-center">Blinds</ion-label>
+    </ion-list-header>
+
+    <!-- Use @for with trackBy and style the first and last items -->
+    @for (blind of blinds; track blind[1]; let isFirst = $first; let isLast = $last) {
+      <app-blinds-selection  [ngClass]="{
+    'first-item-class': isFirst,
+    'last-item-class': isLast,
+  }"  [selected]="blindsAreEqual(blind, selectedBlinds)" [blinds]="blind" (click)="onBlindsSelected(blind)"/>
+    }
+  </ion-list>
+
+  <ion-button class="mt-3" (click)="onCancelClick()" expand="block" color="secondary">Cancel</ion-button>
+</ion-content>

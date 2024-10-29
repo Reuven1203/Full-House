@@ -1,0 +1,7 @@
+<ion-item class="newPlayerItem" color="primary">
+  <ion-avatar class="h-[20px] w-[20px] rounded-[50%]" slot="start">
+    <img class="h-[20px] w-[20px] rounded-[50%]" alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+  </ion-avatar>
+  <input #inputEl [(ngModel)]="inputText" (keyup.enter)="inputEl.blur()" (focusout)="onInputUnfocused()"  class="ml-2" placeholder="Name"/>
+  <ion-icon (click)="onClosedClicked()" slot="end" color="danger" name="close-outline"></ion-icon>
+</ion-item>

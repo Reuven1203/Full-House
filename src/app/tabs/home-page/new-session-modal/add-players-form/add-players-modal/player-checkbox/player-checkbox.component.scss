@@ -1,0 +1,16 @@
+.custom-checkbox {
+  appearance: none; /* Remove default checkbox styles */
+  -webkit-appearance: none; /* For Safari */
+  width: 1.5rem; /* Size of the checkbox */
+  height: 1.5rem; /* Size of the checkbox */
+  background-color: var(--ion-background-color);
+  border-radius: 9999px; /* Full rounding */
+  cursor: pointer;
+}
+
+.custom-checkbox:checked {
+  background-color: #10b981; /* Green background when checked */
+  border-color: #10b981; /* Green border when checked */
+//  have a checkmark appear when checked
+
+}

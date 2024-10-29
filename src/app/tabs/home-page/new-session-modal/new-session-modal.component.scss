@@ -1,0 +1,34 @@
+$border-radius: 20px;
+ion-toolbar {
+  --background: var(--ion-color-primary);
+  display: flex;
+  justify-content: center;
+  height: 120px;
+  border-bottom-left-radius:$border-radius ;
+  border-bottom-right-radius:$border-radius ;
+}
+
+ion-content {
+}
+
+ion-button {
+  font-size: larger;
+}
+
+ion-segment {
+  --background: var(--ion-color-primary);
+}
+
+ ion-item {
+  --background: var(--ion-color-primary-shade);
+}
+
+ion-item ion-label{
+  white-space: nowrap;
+}
+
+app-value-chip {
+  margin-right: 2px;
+}
+
+

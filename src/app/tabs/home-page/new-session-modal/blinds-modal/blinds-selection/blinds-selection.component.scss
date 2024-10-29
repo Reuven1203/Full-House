@@ -1,0 +1,27 @@
+$border-radius:10px;
+ion-item {
+  --background: var(--ion-color-primary-tint);
+}
+
+:host(.first-item-class) ion-item::part(native) {
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+}
+
+:host(.last-item-class) ion-item::part(native) {
+  border-bottom-left-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+}
+
+
+
+ion-item.selected-item::part(native) {
+  --background: var(--ion-color-primary);
+}
+
+ion-item:active::part(native)  {
+  --background: var(--ion-color-primary);
+}
+
+
+

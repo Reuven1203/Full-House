@@ -1,0 +1,11 @@
+<input
+  [value]="'$' + value"
+  (input)="onValueChange($event)"
+  (focus)="onFocus()"
+  (blur)="onBlur()"
+  type="text"
+  inputmode="decimal"
+  pattern="[0-9]*\.?[0-9]*"
+  class="rounded-2xl w-[75px] bg-primary-tint active:bg-primary-shade text-white text-center"
+  #inputField
+/>

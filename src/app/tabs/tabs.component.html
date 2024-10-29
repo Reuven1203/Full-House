@@ -1,0 +1,10 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+      @for (tab of tabs; track tab.label) {
+        <ion-tab-button mode="ios" tab="{{tab.path}}" >
+          <ion-icon aria-hidden="true" [name]="getIcon(tab)"></ion-icon>
+          <ion-label>{{tab.label}}</ion-label>
+        </ion-tab-button>
+      }
+  </ion-tab-bar>
+</ion-tabs>

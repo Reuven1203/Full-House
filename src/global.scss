@@ -35,3 +35,40 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+
+
+/* Import Tailwind after Ionic */
+@import 'theme/variables.scss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Additional global styles */
+//body {
+//  background-color: var(--ion-color-background);
+//  color: var(--ion-color-text);
+//}
+//ion-content {
+//  --background: var(--ion-color-background);
+//}
+//
+//
+//
+//.list-item {
+//  --background: var(--ion-color-primary);
+//  display: flex;
+//  --inner-border-width: 0px;
+//  border-radius: 7px;
+//}
+//.list-item:active {
+//  --background: var(--ion-color-primary-shade)
+//}
+//
+ion-button[color="success"]::part(native) {
+  --ion-color-contrast: var(--ion-color-success-text);
+}
+//
+//.list-ios {
+//  background: none;
+//}

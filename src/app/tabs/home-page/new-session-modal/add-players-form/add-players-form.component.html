@@ -1,0 +1,36 @@
+<ion-label class="p-2 font-bold">Players</ion-label>
+  <ion-button id="openPlayersModal"    color="success" expand="block">
+    <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+    Add Players
+  </ion-button>
+<div class="flex justify-end items-center" slot="end">
+  @if(sessionPlayers.length !== 0){
+    <app-tooltip>
+      <div class="flex justify-evenly">
+        <div class="flex">
+          <ion-label class="text-xs text-white">Buy In:</ion-label>
+          <ion-icon icon="caret-down"></ion-icon>
+        </div>
+        <div class="flex">
+          <ion-label class="text-xs text-white">Cash Out:</ion-label>
+          <ion-icon icon="caret-up"></ion-icon>
+        </div>
+      </div>
+    </app-tooltip>
+  }
+</div>
+
+<ion-list>
+<!--  <ion-list-header class="text-xs text-white flex justify-end">-->
+<!--  </ion-list-header>-->
+  @for (player of sessionPlayers; track player){
+    <app-session-player [showCashOut]="isSessionComplete" (cashOutChange)="onCashOutChange(player.playerId, $event)" [cashOut]="player.cashOut || 0" (buyInChange)="onBuyInChange(player.playerId, $event)" [playerId]="player.playerId" [buyIn]="player.buyIn" />
+  }
+</ion-list>
+
+  <ion-modal #modal
+             [presentingElement]="presentingElement" [backdropDismiss]="true"  trigger="openPlayersModal">
+    <ng-template>
+      <app-add-players-modal  (playerSelected)="togglePlayerToSession($event)" (cancel)="closeModal()" />
+    </ng-template>
+  </ion-modal>

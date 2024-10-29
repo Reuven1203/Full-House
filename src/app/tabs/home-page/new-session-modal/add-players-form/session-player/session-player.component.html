@@ -1,0 +1,24 @@
+<ion-item lines="lines">
+  <div slot="start" class="space-x-1 flex items-center w-[75px] py-2">
+    <ion-avatar class="h-[20px] w-[20px] rounded-[50%]" slot="start">
+      <img class="h-[20px] w-[20px] rounded-[50%]" alt="Silhouette of a person's head"
+           src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+    </ion-avatar>
+    <ion-label>
+      {{player?.name}}
+    </ion-label>
+  </div>
+  <div class="flex items-center justify-between w-full">
+    <div class="flex items-center space-x-1">
+      <ion-icon slot="start" name="caret-down"></ion-icon>
+      <app-value-chip  (valueChange)="onBuyInChange($event)" [value]="buyIn"></app-value-chip>
+    </div>
+    @if(showCashOut){
+      <div class="flex items-center space-x-1">
+        <ion-icon slot="start" name="caret-up"></ion-icon>
+        <app-value-chip slot="end" (valueChange)="onCashOutChange($event)" [value]="cashOut"></app-value-chip>
+      </div>
+    }
+  </div>
+
+</ion-item>
