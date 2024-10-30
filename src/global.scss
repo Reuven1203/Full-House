@@ -45,13 +45,13 @@
 @tailwind utilities;
 
 /* Additional global styles */
-//body {
-//  background-color: var(--ion-color-background);
-//  color: var(--ion-color-text);
-//}
-//ion-content {
-//  --background: var(--ion-color-background);
-//}
+body {
+  background-color: var(--ion-color-background);
+  color: var(--ion-color-text);
+}
+ion-content {
+  --background: var(--ion-color-background);
+}
 //
 //
 //
@@ -69,6 +69,6 @@ ion-button[color="success"]::part(native) {
   --ion-color-contrast: var(--ion-color-success-text);
 }
 //
-//.list-ios {
-//  background: none;
-//}
+.list-ios {
+  background: none;
+}

@@ -1,14 +1,13 @@
-<ion-content class="ion-padding ion-page"  [fullscreen]="true">
+<ion-content class="ion-padding ion-page" [scrollY]="false"  [fullscreen]="true">
+  <ion-list-header #header>
+    <ion-label class="font-bold text-white">Players</ion-label>
+    <ion-button (click)="onAddNewPlayerClick()" color="success" fill="outline">New Player</ion-button>
+  </ion-list-header>
   <ion-list>
-    <ion-list-header>
-      <ion-label class="font-bold text-white">Players</ion-label>
-      <ion-button (click)="onAddNewPlayerClick()" color="success" fill="outline">New Player</ion-button>
-    </ion-list-header>
     @for (playerId of leaguePlayers; track playerId){
       <app-player-checkbox  [checked]="isPlayerSelected(playerId)" (click)="onPlayerClick(playerId)"  [playerId]="playerId"/>
     }
     <ng-container #newPlayerContainer></ng-container>
-
   </ion-list>
 
 

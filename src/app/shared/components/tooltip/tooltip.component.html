@@ -1,6 +1,6 @@
 <div>
   <ion-icon  id="trigger" size="medium"  icon="information-circle"></ion-icon>
-  <ion-popover mode="ios" side="left"  trigger="trigger">
+  <ion-popover  [showBackdrop]="true" mode="ios" side="left"  trigger="trigger">
     <ng-template>
       @if(text){
         {{text}}

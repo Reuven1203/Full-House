@@ -1,3 +1,10 @@
 ion-popover{
   --background: var(--ion-color-primary);
 }
+
+ion-popover::part(backdrop) {
+  //make it darker
+  --background: var(--ion-color-secondary);
+
+}
+

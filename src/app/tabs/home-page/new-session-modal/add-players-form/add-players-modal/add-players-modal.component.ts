@@ -6,15 +6,16 @@ import {
   Output,
   ViewChild,
   ViewContainerRef,
-  ComponentRef,
+  ComponentRef, ElementRef, AfterViewInit,
 } from '@angular/core';
-import { AnimationController, IonicModule } from '@ionic/angular';
+import {AnimationController, IonicModule, ModalController} from '@ionic/angular';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PlayerCheckboxComponent } from './player-checkbox/player-checkbox.component';
 import { NewSessionService } from '../../../../../core/services/newSession.service';
 import { NewPlayerInputComponent } from './new-player-input/new-player-input.component';
 import { BaseModalComponent } from '../../../../../shared/components/base-modal/base-modal.component';
 import {LeagueService} from "../../../../../core/services/league.service";
+import {GestureController} from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-add-players-modal',
@@ -27,12 +28,14 @@ import {LeagueService} from "../../../../../core/services/league.service";
     PlayerCheckboxComponent
   ]
 })
-export class AddPlayersModalComponent extends BaseModalComponent implements OnInit {
+export class AddPlayersModalComponent extends BaseModalComponent implements OnInit, AfterViewInit {
   @Output() playerSelected = new EventEmitter<string>();
   private componentRefs: ComponentRef<NewPlayerInputComponent>[] = [];
 
   // Reference to the container where new player components will be injected
-  @ViewChild('newPlayerContainer', { read: ViewContainerRef }) newPlayerContainer!: ViewContainerRef;
+  @ViewChild('newPlayerContainer', {read: ViewContainerRef}) newPlayerContainer!: ViewContainerRef;
+  @ViewChild('header', { read: ElementRef }) header!: ElementRef;
+
 
   private newSessionService = inject(NewSessionService);
   private leagueService = inject(LeagueService);
@@ -40,9 +43,28 @@ export class AddPlayersModalComponent extends BaseModalComponent implements OnIn
   leaguePlayers!: string[];
   sessionPlayers!: string[];
 
-  constructor(private animationCtrl: AnimationController) {
+  constructor(private gestureCtrl: GestureController, private modalCtrl: ModalController) {
     super();
   }
+
+  ngAfterViewInit() {
+    const gesture = this.gestureCtrl.create({
+      el: this.header.nativeElement,
+      gestureName: 'swipe-to-close',
+      direction: 'y',
+      onEnd: ev => {
+        if (ev.deltaY > 50) { // Adjust this threshold as needed
+          this.closeModal();
+        }
+      }
+    });
+    gesture.enable(true);
+  }
+  async closeModal() {
+    await this.modalCtrl.dismiss();
+  }
+
+
 
   ngOnInit() {
     this.leaguePlayers = this.leagueService.getAllLeaguePlayers();
@@ -74,21 +96,19 @@ export class AddPlayersModalComponent extends BaseModalComponent implements OnIn
       this.removePlayerComponent(componentRef);
     });
     componentRef.instance.inputUnfocused.subscribe(() => {
-      if(!componentRef.instance.inputText) {
+      if (!componentRef.instance.inputText) {
         this.removePlayerComponent(componentRef);
-      }else {
-       const newPlayer = this.leagueService.addPlayer(componentRef.instance.inputText);
-       // add id to component ref
+      } else {
+        const newPlayer = this.leagueService.addPlayer(componentRef.instance.inputText);
+        // add id to component ref
         componentRef.instance.playerId = newPlayer;
-       this.onPlayerClick(newPlayer);
+        this.onPlayerClick(newPlayer);
       }
     });
     this.componentRefs.push(componentRef);
     setTimeout(() => {
       componentRef.instance.focusInput();
     }, 0);
-    const newPlayerElement = componentRef.instance.nativeElement;
-    this.animateNewPlayerElement(newPlayerElement);
   }
 
   removePlayerComponent(componentRef: ComponentRef<NewPlayerInputComponent>) {
@@ -100,7 +120,7 @@ export class AddPlayersModalComponent extends BaseModalComponent implements OnIn
       // Remove the reference from the array
       this.componentRefs.splice(index, 1);
 
-      if(componentRef.instance.playerId) {
+      if (componentRef.instance.playerId) {
         this.newSessionService.removeSessionPlayer(componentRef.instance.playerId);
         this.leagueService.removePlayer(componentRef.instance.playerId);
 
@@ -112,17 +132,6 @@ export class AddPlayersModalComponent extends BaseModalComponent implements OnIn
   }
 
 
-
-  // Function to apply animation to a newly created player input element
-  animateNewPlayerElement(element: HTMLElement) {
-    const animation = this.animationCtrl
-      .create()
-      .addElement(element)
-      .duration(500) // Adjust duration as needed
-      .iterations(1)
-      .fromTo('height', '0', '100%')
-    animation.play(); // Play the animation
-  }
 }
 
 

@@ -8,7 +8,9 @@
 
     </div>
     <ion-modal [animated]="true" trigger="open-modal">
+      <ng-template>
         <app-new-session-modal (cancel)="closeModal()"  />
+      </ng-template>
 <!--        <ion-toggle></ion-toggle>-->
 <!--        <ion-button color="danger" (click)="closeModal()">Cancel</ion-button>-->
     </ion-modal>
@@ -16,15 +18,15 @@
 
 
 <!--import components early due to bugs-->
-<!--<div class="hidden">-->
-<!--  <ion-toggle></ion-toggle>-->
-<!--  <ion-segment>-->
-<!--    <ion-segment-button value="friends">-->
-<!--    </ion-segment-button>-->
-<!--    <ion-segment-button value="enemies">-->
-<!--    </ion-segment-button>-->
-<!--  </ion-segment>-->
-<!--</div>-->
+<div class="hidden">
+  <ion-toggle></ion-toggle>
+  <ion-segment>
+    <ion-segment-button value="friends">
+    </ion-segment-button>
+    <ion-segment-button value="enemies">
+    </ion-segment-button>
+  </ion-segment>
+</div>
 
 
 
