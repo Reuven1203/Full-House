@@ -1,4 +1,4 @@
-import {Component, OnChanges, signal, ViewChild} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -7,7 +7,7 @@ import {
   IonButton,
   IonNav,
   IonModal,
-  IonToggle, IonSegment, IonSegmentButton
+  IonToggle, IonSegment, IonSegmentButton, IonPopover
 } from '@ionic/angular/standalone';
 import { ExploreContainerComponent } from '../../explore-container/explore-container.component';
 import {SessionsComponent} from "./sessions/sessions.component";
@@ -19,7 +19,7 @@ import {ComponentPreloadService} from "../../core/services/component-preload.ser
   templateUrl: 'home.component.html',
   styleUrls: ['home.component.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainerComponent, SessionsComponent, IonButton, IonNav, IonModal, NewSessionModalComponent, IonToggle, IonSegment, IonSegmentButton]
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainerComponent, SessionsComponent, IonButton, IonNav, IonModal, NewSessionModalComponent, IonToggle, IonSegment, IonSegmentButton, IonPopover]
 })
 export class HomeComponent {
   @ViewChild(IonModal) modal: IonModal | undefined;

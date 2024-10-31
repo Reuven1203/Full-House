@@ -47,6 +47,7 @@ export class NewSessionService {
   }
 
   getSessionPlayers() {
+  //   bind players id from the league players
     return this.sessionPlayersSubject.value;
   }
 

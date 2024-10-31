@@ -1,39 +1,64 @@
-import {Injectable} from "@angular/core";
-import {dummyPlayers} from "../../tabs/dummyPlayers";
+import {inject, Injectable} from "@angular/core";
 import {BehaviorSubject} from "rxjs";
+import {DatabaseService} from "../../../database/database.service";
+import {PlayerModel} from "../models/player.model";
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class LeagueService{
-  private leaguePlayersSubject = new BehaviorSubject<string[]>( dummyPlayers.map(player => player.id));
+export class LeagueService {
+  private database = inject(DatabaseService);
+  private leaguePlayersSubject = new BehaviorSubject<PlayerModel[]>([]);
   leaguePlayers$ = this.leaguePlayersSubject.asObservable();
+
+
+  constructor() {
+    this.initializeLeaguePlayers();
+  }
+
+
+  initializeLeaguePlayers() {
+    this.database.getAllLeaguePlayers().then(players => {
+      this.leaguePlayersSubject.next(players);
+    });
+  }
+
+
   getAllLeaguePlayers() {
     return this.leaguePlayersSubject.value;
   }
 
-  addPlayer(name:string) {
-    const playerId = 'player' + (dummyPlayers.length + 1);
-    dummyPlayers.push({
-      id: playerId,
-      name: name,
-      avatar: 'avatar' + (dummyPlayers.length + 1) + '.jpg'
-    });
+  async addPlayer(name: string, email?: string, avatar?: string): Promise<PlayerModel> {
+    try {
+      const newPlayer = await this.database.addPlayer({
+        name,
+        email: email || null,
+        avatar: avatar || null
+      });
 
-    this.leaguePlayersSubject.next([...this.leaguePlayersSubject.value, playerId]);
+      this.leaguePlayersSubject.next([...this.leaguePlayersSubject.value, newPlayer]);
 
-    return playerId;
-
+      return newPlayer; // Return the full player object, including the ID
+    } catch (error) {
+      console.error("Failed to add player:", error);
+      throw error;
+    }
   }
 
-  removePlayer(playerId: string) {
-    dummyPlayers.splice(dummyPlayers.findIndex(player => player.id === playerId), 1);
-    this.leaguePlayersSubject.next(this.leaguePlayersSubject.value.filter(player => player !== playerId));
+  async removePlayer(playerId: string) {
+    try {
+      const removedPlayer = await this.database.removePlayerById(playerId);
+      this.leaguePlayersSubject.next(this.leaguePlayersSubject.value.filter(player => player.id !== playerId));
+      return removedPlayer;
+    } catch (error) {
+      console.error("Failed to remove player:", error);
+      throw error;
+    }
   }
 
   getPlayerInfo(playerId: string) {
-    return dummyPlayers.find(player => player.id === playerId);
+    return this.leaguePlayersSubject.value.find(player => player.id === playerId);
   }
-  constructor() { }
+
 }
