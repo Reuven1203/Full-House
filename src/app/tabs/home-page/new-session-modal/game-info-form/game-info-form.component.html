@@ -1,13 +1,13 @@
 <form [formGroup]="FormGroup">
-  <ion-list>
+  <ion-list lines="inset">
     <ion-label class="p-2 font-bold">Game info</ion-label>
-    <ion-item lines="none" id="openModal" detail="true">
+    <ion-item  id="openModal" detail="true">
       <ion-label >Blinds</ion-label>
       <ion-label class="font-bold" slot="end">
         {{ blinds  | blinds : ' / '}}
       </ion-label>
     </ion-item>
-    <ion-item (click)="onDefaultBuyInClick()" lines="none" class="default-buy-in">
+    <ion-item (click)="onDefaultBuyInClick()" class="default-buy-in">
       <ion-label>Default Buy In</ion-label>
       <app-value-chip  [value]="defaultBuyIn" formControlName="defaultBuyIn"/>
     </ion-item>
@@ -15,6 +15,27 @@
       <ion-label >Session Completed</ion-label>
       <ion-toggle color="secondary" (click)="onSessionCompleteClick()"  slot="end" formControlName="sessionComplete" ></ion-toggle>
     </ion-item>
+
+@if(FormGroup.get('sessionComplete')?.value){
+  <ion-item>
+    <ion-label>Start Date</ion-label>
+    <ion-datetime-button color="secondary"  slot="end" datetime="startDateTime"  ></ion-datetime-button>
+    <ion-modal [keepContentsMounted]="true" >
+      <ng-template>
+        <ion-datetime [preferWheel]="true" [value]="startDateTime" id="startDateTime" ></ion-datetime>
+      </ng-template>
+    </ion-modal>
+  </ion-item>
+  <ion-item>
+    <ion-label>End Date</ion-label>
+    <ion-datetime-button color="secondary"  slot="end" datetime="endDateTime"  ></ion-datetime-button>
+    <ion-modal [keepContentsMounted]="true" >
+      <ng-template>
+<!--        <ion-datetime [preferWheel]="true" [value]="endDateTime" id="endDateTime" ></ion-datetime>-->
+      </ng-template>
+    </ion-modal>
+  </ion-item>
+}
   </ion-list>
 
 </form>

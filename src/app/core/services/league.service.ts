@@ -58,6 +58,7 @@ export class LeagueService {
   }
 
   getPlayerInfo(playerId: string) {
+    console.log(this.leaguePlayersSubject.value);
     return this.leaguePlayersSubject.value.find(player => player.id === playerId);
   }
 

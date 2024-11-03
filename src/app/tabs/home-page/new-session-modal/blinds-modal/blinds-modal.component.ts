@@ -45,7 +45,7 @@ export class BlindsModalComponent extends BaseModalComponent implements OnInit {
 
   onBlindsSelected(blinds: [number, number]) {
     this.blindsSelected.emit(blinds);
-    this.cancel.emit();
+    this.oncancel.emit();
   }
 
   blindsAreEqual(blinds1: [number, number], blinds2: [number, number]) {

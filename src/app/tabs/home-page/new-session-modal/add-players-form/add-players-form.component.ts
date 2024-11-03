@@ -35,7 +35,6 @@ export class AddPlayersFormComponent extends BaseModalFormComponent implements O
   override ngOnInit() {
     super.ngOnInit();
     this.newSessionService.sessionPlayers$.subscribe((players) => {
-      console.log(players);
       this.sessionPlayers = players;
     });
     addIcons({caretUp, caretDown});

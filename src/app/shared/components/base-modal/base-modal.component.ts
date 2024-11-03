@@ -2,9 +2,9 @@ import { EventEmitter, Output, Directive } from '@angular/core';
 
 @Directive()
 export abstract class BaseModalComponent {
-  @Output() cancel = new EventEmitter<void>();
+  @Output() oncancel = new EventEmitter<void>();
 
   onCancelClick() {
-    this.cancel.emit();
+    this.oncancel.emit();
   }
 }

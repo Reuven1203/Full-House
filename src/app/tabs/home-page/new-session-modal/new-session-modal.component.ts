@@ -38,7 +38,7 @@ import {NgClass} from "@angular/common";
   ]
 })
 export class NewSessionModalComponent implements OnInit {
-  @Output() cancel = new EventEmitter<void>();
+  @Output() oncancel = new EventEmitter<void>();
   newSessionForm!: FormGroup;
   private newSessionService = inject(NewSessionService);
   private destroyRef = inject(DestroyRef);
@@ -48,11 +48,13 @@ export class NewSessionModalComponent implements OnInit {
 
 
   ngOnInit() {
+
     this.newSessionForm = new FormGroup({
       blinds: new FormControl<[number, number] |  undefined>(this.newSessionService.getBlinds()),
       defaultBuyIn: new FormControl<number>(this.newSessionService.getDefaultBuyIn()),
       sessionComplete: new FormControl<boolean>(false),
-      players: new FormControl<SessionPlayerModel[]>(this.newSessionService.getSessionPlayers())
+      players: new FormControl<SessionPlayerModel[]>(this.newSessionService.getSessionPlayers()),
+      startDateTime: new FormControl<string>(new Date().toISOString()),
 
     });
 
@@ -81,7 +83,7 @@ export class NewSessionModalComponent implements OnInit {
 
   }
   onCancelClick() {
-    this.cancel.emit();
+    this.oncancel.emit();
   }
 
 

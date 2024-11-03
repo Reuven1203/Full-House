@@ -1,5 +1,5 @@
 <ion-header  class="flex flex-col justify-center  h-1/6 text-center">
-    <ion-title>RJ3</ion-title>
+    <ion-title>Some poker league</ion-title>
   </ion-header>
   <ion-content [fullscreen]="true">
     <div class="h-full flex flex-col p-4 space-y-5">
@@ -9,7 +9,7 @@
     </div>
     <ion-modal [animated]="true" trigger="open-modal">
       <ng-template>
-        <app-new-session-modal (cancel)="closeModal()"  />
+        <app-new-session-modal (oncancel)="closeModal()"  />
       </ng-template>
 <!--        <ion-toggle></ion-toggle>-->
 <!--        <ion-button color="danger" (click)="closeModal()">Cancel</ion-button>-->
@@ -27,6 +27,8 @@
     </ion-segment-button>
   </ion-segment>
   <ion-popover/>
+  <ion-datetime/>
+  <ion-datetime-button/>
 </div>
 
 
