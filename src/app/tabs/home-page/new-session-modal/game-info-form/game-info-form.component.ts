@@ -8,6 +8,7 @@ import {
 } from "../../sessions/session/session-info/player-session-info/value-chip/value-chip.component";
 import {BlindsModalComponent} from "../blinds-modal/blinds-modal.component";
 import {BaseModalFormComponent} from "../../../../shared/components/base-modal/base-modal-form.component";
+import {LeagueService} from "../../../../core/services/league.service";
 
 @Component({
     selector: 'app-game-info-form',
@@ -25,13 +26,17 @@ import {BaseModalFormComponent} from "../../../../shared/components/base-modal/b
 })
 export class GameInfoFormComponent extends BaseModalFormComponent implements OnInit {
   @ViewChild(ValueChipComponent, { static: false }) valueChipComponent!: ValueChipComponent;
+  private leagueService = inject(LeagueService);
+  leagueBlinds!: {id:string, blinds: [number, number]}[];
 
   constructor(private cdr: ChangeDetectorRef) {
     super();
+
   }
 
-  override ngOnInit() {
+  override async ngOnInit() {
     super.ngOnInit();
+    this.leagueBlinds = await this.leagueService.getLeagueBlinds();
   }
 
 

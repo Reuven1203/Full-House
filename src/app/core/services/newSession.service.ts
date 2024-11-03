@@ -8,6 +8,7 @@ import {SessionPlayerModel} from "../models/session.model";
 })
 export class NewSessionService {
   // Individual BehaviorSubjects for each form field
+  // TODO: Once sessions are dealt with in database, default starting blinds should be from the last session
   private blindsSubject = new BehaviorSubject<[number, number]>([0.25, 0.5]);
   blinds$ = this.blindsSubject.asObservable();  // Observable for blinds
   private defaultBuyInSubject = new BehaviorSubject<number>(100);
@@ -19,6 +20,7 @@ export class NewSessionService {
 
 
   constructor() {}
+
 
   // Blinds
   getBlinds() {

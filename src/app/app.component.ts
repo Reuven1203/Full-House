@@ -18,18 +18,21 @@ import {NgIf} from "@angular/common";
 
 
 export class AppComponent {
-  constructor(private database:DatabaseService) {
+  constructor(private database: DatabaseService) {
     this.initApp().then(r => {
       console.log('>>>> App initialized')
     })
   }
 
   async initApp() {
-    await SplashScreen.show({autoHide: true
+    await SplashScreen.show({
+      autoHide: true
     });
-    this.database.initializePlugin().then(() => {
-      console.log('>>>> Database initialized');
-      SplashScreen.hide();
-    })
+    try {
+      await this.database.initializePlugin();
+      console.log('>>>> Database initialized')
+    }catch(error){
+      console.error("Failed to initialize app:", error);
+    }
   }
 }

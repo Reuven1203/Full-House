@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { PlayerModel } from "../app/core/models/player.model";
 import { BehaviorSubject, Observable } from 'rxjs';
-import {ALL_SCHEMAS} from "./Schemas";
+import {ALL_SCHEMAS, STARTING_BLINDS} from "./Schemas";
 
 const DB_LEAGUE = "pokerleaguedb";
 
@@ -17,9 +17,17 @@ export class DatabaseService {
   players$: Observable<PlayerModel[]> = this.playersSubject.asObservable();
 
   async initializePlugin(): Promise<void> {
+    const isConnection = await this.sqlite.isConnection(DB_LEAGUE, false);
     try {
-      this.db = await this.sqlite.createConnection(DB_LEAGUE, false, "no-encryption", 1, false);
+      if(!isConnection.result){
+        console.log(">> Creating database connection");
+        this.db = await this.sqlite.createConnection(DB_LEAGUE, false, "no-encryption", 1, false);
+      }else{
+        console.log(">> Retrieving database connection");
+        this.db = await this.sqlite.retrieveConnection(DB_LEAGUE, false);
+      }
       await this.db.open();
+      console.log("Database opened");
       await this.db.execute(ALL_SCHEMAS);
       const result = await this.db.query('SELECT COUNT(*) as count FROM leagues');
       console.log("Leagues count:", result.values);
@@ -27,7 +35,9 @@ export class DatabaseService {
         await this.db.execute(`
           INSERT INTO leagues (id, name) VALUES ('1', 'MY POKER LEAGUE');
         `);
+        await this.initializeBlinds()
       }
+      console.log("Database initialized");
       const playersTableCheck = await this.db.query('PRAGMA table_info(players)');
       console.log("Players table check:", playersTableCheck.values);
       await this.loadPlayers();
@@ -144,11 +154,25 @@ export class DatabaseService {
     }
   }
 
+  async getLeagueBlinds(leagueID = 1): Promise<any> {
+    try {
+      const result = await this.db.query(`SELECT id, blinds_low, blinds_high FROM blinds WHERE league_id = "${leagueID}"`);
+      return result.values || [];
+    } catch (error) {
+      console.error("Failed to get blinds:", error);
+      throw error;
+    }
+  }
+
   dropAllTables = async () => {
     try {
       await this.db.execute(`DROP TABLE IF EXISTS league_players`);
       await this.db.execute(`DROP TABLE IF EXISTS players`);
       await this.db.execute(`DROP TABLE IF EXISTS leagues`);
+      await this.db.execute(`DROP TABLE IF EXISTS sessions`);
+      await this.db.execute(`DROP TABLE IF EXISTS cash_games`);
+      await this.db.execute(`DROP TABLE IF EXISTS cashgame_withdraw_records`);
+      await this.db.execute(`DROP TABLE IF EXISTS blinds`);
       console.log("All tables dropped");
 
 
@@ -157,5 +181,15 @@ export class DatabaseService {
       throw error;
     }
   }
+
+  initializeBlinds = async () => {
+    try{
+      await this.db.execute(STARTING_BLINDS)
+    }catch (error) {
+      console.error("Failed to initialize blinds:", error);
+      throw error;
+    }
+  }
+
 }
 

@@ -42,7 +42,7 @@
 
 <ion-modal #modal [presentingElement]="presentingElement" [backdropDismiss]="true"  trigger="openModal">
   <ng-template>
-    <app-blinds-modal (blindsSelected)="onBlindsSelected($event)" (oncancel)="closeModal()"/>
+    <app-blinds-modal [blinds]="leagueBlinds" (blindsSelected)="onBlindsSelected($event)" (oncancel)="closeModal()"/>
   </ng-template>
 </ion-modal>
 

@@ -62,4 +62,13 @@ export class LeagueService {
     return this.leaguePlayersSubject.value.find(player => player.id === playerId);
   }
 
+  async getLeagueBlinds() {
+    const blinds =  await this.database.getLeagueBlinds();
+    return blinds.map((blind: {id:string, blinds_low:number, blinds_high:number}) =>{
+      return {
+        id: blind.id,
+        blinds: [blind.blinds_low, blind.blinds_high]
+      }
+    });
+  }
 }

@@ -5,11 +5,11 @@
     </ion-list-header>
 
     <!-- Use @for with trackBy and style the first and last items -->
-    @for (blind of blinds; track blind[1]; let isFirst = $first; let isLast = $last) {
+    @for (blind of blinds; track blind.id; let isFirst = $first; let isLast = $last) {
       <app-blinds-selection  [ngClass]="{
     'first-item-class': isFirst,
     'last-item-class': isLast,
-  }"  [selected]="blindsAreEqual(blind, selectedBlinds)" [blinds]="blind" (click)="onBlindsSelected(blind)"/>
+  }"  [selected]="blindsAreEqual(blind.blinds, selectedBlinds)" [blinds]="blind.blinds" (click)="onBlindsSelected(blind.blinds)"/>
     }
   </ion-list>
 

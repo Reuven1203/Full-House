@@ -20,7 +20,7 @@ import {BaseModalComponent} from "../../../../shared/components/base-modal/base-
 
 
 export class BlindsModalComponent extends BaseModalComponent implements OnInit {
-  @Input() blinds?: [number, number][] = [[0.25,0.5], [0.5, 1], [1,2], [1,3], [2,5], [5,10], [10,20], [25,50], [50,100], [100,200], [200,400], [500,1000]]
+  @Input() blinds?:{ id:string, blinds: [number, number]}[];
   @Output() blindsSelected = new EventEmitter<[number, number]>();
   private newSessionService = inject(NewSessionService);
   selectedBlinds!: [number, number];
