@@ -8,7 +8,7 @@ import {
   ViewContainerRef,
   ComponentRef, ElementRef, AfterViewInit,
 } from '@angular/core';
-import {AnimationController, IonicModule, ModalController} from '@ionic/angular';
+import { IonicModule, ModalController} from '@ionic/angular';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PlayerCheckboxComponent } from './player-checkbox/player-checkbox.component';
 import { NewSessionService } from '../../../../../core/services/newSession.service';
@@ -16,6 +16,7 @@ import { NewPlayerInputComponent } from './new-player-input/new-player-input.com
 import { BaseModalComponent } from '../../../../../shared/components/base-modal/base-modal.component';
 import {LeagueService} from "../../../../../core/services/league.service";
 import {GestureController} from "@ionic/angular/standalone";
+import {PlayerModel} from "../../../../../core/models/player.model";
 
 @Component({
   selector: 'app-add-players-modal',
@@ -40,7 +41,7 @@ export class AddPlayersModalComponent extends BaseModalComponent implements OnIn
   private newSessionService = inject(NewSessionService);
   private leagueService = inject(LeagueService);
   private destroyRef = inject(DestroyRef);
-  leaguePlayers!: string[];
+  leaguePlayers!: PlayerModel[]
   sessionPlayers!: string[];
 
   constructor(private gestureCtrl: GestureController, private modalCtrl: ModalController) {
@@ -76,11 +77,14 @@ export class AddPlayersModalComponent extends BaseModalComponent implements OnIn
     });
   }
 
-  isPlayerSelected(playerId: string) {
+  isPlayerSelected(playerId: string | undefined) {
+    if (!playerId) {
+      return false;
+    }
     return this.sessionPlayers.includes(playerId);
   }
 
-  onPlayerClick(playerId: string) {
+  onPlayerClick(playerId: string | undefined) {
     this.playerSelected.emit(playerId);
   }
 
@@ -92,17 +96,17 @@ export class AddPlayersModalComponent extends BaseModalComponent implements OnIn
   // Function to dynamically inject new player components and apply animation
   addNewPlayerComponent() {
     const componentRef = this.newPlayerContainer.createComponent(NewPlayerInputComponent);
-    componentRef.instance.closedClicked.subscribe(() => {
-      this.removePlayerComponent(componentRef);
+    componentRef.instance.closedClicked.subscribe(async () => {
+      await this.removePlayerComponent(componentRef);
     });
-    componentRef.instance.inputUnfocused.subscribe(() => {
+    componentRef.instance.inputUnfocused.subscribe(async () => {
       if (!componentRef.instance.inputText) {
-        this.removePlayerComponent(componentRef);
+        await this.removePlayerComponent(componentRef);
       } else {
-        const newPlayer = this.leagueService.addPlayer(componentRef.instance.inputText);
+        const newPlayer = await this.leagueService.addPlayer(componentRef.instance.inputText);
         // add id to component ref
-        componentRef.instance.playerId = newPlayer;
-        this.onPlayerClick(newPlayer);
+        componentRef.instance.playerId = newPlayer.id;
+        this.onPlayerClick(newPlayer.id as string);
       }
     });
     this.componentRefs.push(componentRef);
@@ -111,7 +115,7 @@ export class AddPlayersModalComponent extends BaseModalComponent implements OnIn
     }, 0);
   }
 
-  removePlayerComponent(componentRef: ComponentRef<NewPlayerInputComponent>) {
+  async removePlayerComponent(componentRef: ComponentRef<NewPlayerInputComponent>) {
     const index = this.componentRefs.indexOf(componentRef);
     if (index !== -1) {
       // Remove the component from the view
@@ -122,9 +126,7 @@ export class AddPlayersModalComponent extends BaseModalComponent implements OnIn
 
       if (componentRef.instance.playerId) {
         this.newSessionService.removeSessionPlayer(componentRef.instance.playerId);
-        this.leagueService.removePlayer(componentRef.instance.playerId);
-
-
+        await this.leagueService.removePlayer(componentRef.instance.playerId);
       }
 
 

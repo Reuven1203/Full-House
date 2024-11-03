@@ -32,7 +32,6 @@ export class GameInfoFormComponent extends BaseModalFormComponent implements OnI
 
   override ngOnInit() {
     super.ngOnInit();
-    this.cdr.detectChanges();
   }
 
 
@@ -61,6 +60,11 @@ export class GameInfoFormComponent extends BaseModalFormComponent implements OnI
   get defaultBuyIn(): number {
     return this.FormGroup.get('defaultBuyIn')?.value;
   }
+
+  get startDateTime(): Date {
+    return this.FormGroup.get('startDateTime')?.value;
+  }
+
 
 
 

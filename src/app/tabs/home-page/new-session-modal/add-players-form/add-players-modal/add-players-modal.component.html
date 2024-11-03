@@ -4,8 +4,8 @@
     <ion-button (click)="onAddNewPlayerClick()" color="success" fill="outline">New Player</ion-button>
   </ion-list-header>
   <ion-list>
-    @for (playerId of leaguePlayers; track playerId){
-      <app-player-checkbox  [checked]="isPlayerSelected(playerId)" (click)="onPlayerClick(playerId)"  [playerId]="playerId"/>
+    @for (player of leaguePlayers; track player.id){
+      <app-player-checkbox  [checked]="isPlayerSelected(player.id)" (click)="onPlayerClick(player.id)"  [playerId]="player.id"/>
     }
     <ng-container #newPlayerContainer></ng-container>
   </ion-list>

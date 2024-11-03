@@ -1,7 +1,7 @@
-import {Component, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {Component, inject, Input, ViewChild} from '@angular/core';
 import {IonicModule} from "@ionic/angular";
-import {dummyPlayers} from "../../../../../dummyPlayers";
 import {PlayerModel} from "../../../../../../core/models/player.model";
+import {LeagueService} from "../../../../../../core/services/league.service";
 
 @Component({
   selector: 'app-player-checkbox',
@@ -13,19 +13,18 @@ import {PlayerModel} from "../../../../../../core/models/player.model";
   ]
 })
 export class PlayerCheckboxComponent {
-  @Input({required:true}) playerId!: string;
+  @Input({required:true}) playerId!: string | undefined;
   @Input() checked:boolean = false;
   @ViewChild('checkbox') checkbox!: HTMLInputElement;
+  private leagueService = inject(LeagueService);
 
 
 
 
   get player(): PlayerModel | undefined {
-    return dummyPlayers.find(player => player.id === this.playerId);
+    if(!this.playerId) return undefined;
+    return this.leagueService.getPlayerInfo(this.playerId);
   }
-
-
-
 
   constructor() { }
 
