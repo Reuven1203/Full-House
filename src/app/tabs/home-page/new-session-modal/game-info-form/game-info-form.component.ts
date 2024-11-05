@@ -1,8 +1,16 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component, ElementRef,
+  inject,
+  Input,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {BlindsPipe} from "../../../../core/pipes/blinds.pipe";
-import {IonicModule} from "@ionic/angular";
-import {ReactiveFormsModule} from "@angular/forms";
-import {IonToggle} from "@ionic/angular/standalone";
+import {IonicModule, IonModal} from "@ionic/angular";
+import {FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {
     ValueChipComponent
 } from "../../sessions/session/session-info/player-session-info/value-chip/value-chip.component";
@@ -24,20 +32,35 @@ import {LeagueService} from "../../../../core/services/league.service";
     BlindsModalComponent
   ]
 })
-export class GameInfoFormComponent extends BaseModalFormComponent implements OnInit {
+export class GameInfoFormComponent extends BaseModalFormComponent implements OnInit, AfterViewInit {
   @ViewChild(ValueChipComponent, { static: false }) valueChipComponent!: ValueChipComponent;
+  @ViewChild('startDateModal', { static: false }) startDateModal!: IonModal;
+  @ViewChild('endDateModal', { static: false }) endDateModal!: IonModal;
   private leagueService = inject(LeagueService);
   leagueBlinds!: {id:string, blinds: [number, number]}[];
+  maxDate!:string;
+
 
   constructor(private cdr: ChangeDetectorRef) {
     super();
-
   }
 
   override async ngOnInit() {
     super.ngOnInit();
     this.leagueBlinds = await this.leagueService.getLeagueBlinds();
+    this.maxDate = new Date().toISOString().split('T')[0];
+
   }
+
+  // get endMinDate(): string {
+  //   return this.FormGroup.get('startDateTime')?.value.toISOString().split('T')[0];
+  // }
+
+  ngAfterViewInit() {
+    this.cdr.detectChanges();
+  }
+
+
 
 
   onDefaultBuyInClick() {
@@ -66,9 +89,23 @@ export class GameInfoFormComponent extends BaseModalFormComponent implements OnI
     return this.FormGroup.get('defaultBuyIn')?.value;
   }
 
+
   get startDateTime(): Date {
     return this.FormGroup.get('startDateTime')?.value;
   }
+
+  async onDateItemClick(field: 'startDateTime' | 'endDateTime') {
+    const modal = field === 'startDateTime' ? this.startDateModal : this.endDateModal;
+    await modal.present();
+  }
+
+  onDateChange(event: any, field: "startDateTime" | "endDateTime") {
+    const date = event.detail.value;
+    this.FormGroup.patchValue({ [field]: date });
+  }
+
+
+
 
 
 

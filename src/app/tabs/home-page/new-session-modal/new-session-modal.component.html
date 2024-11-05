@@ -4,7 +4,7 @@
       <ion-button color="danger" (click)="onCancelClick()">Cancel</ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button color="secondary"  [strong]="true">Start</ion-button>
+      <ion-button (click)="onSaveClick()" [color]="newSessionForm.get('sessionComplete')!.value ? 'tertiary': 'secondary'"  [strong]="true">{{newSessionForm.get('sessionComplete')!.value ? 'Save' : 'Start'}}</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

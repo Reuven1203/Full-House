@@ -1,3 +1,18 @@
 <ion-app>
   <app-main-layout/>
 </ion-app>
+
+
+<!--import components early due to bugs-->
+<div class="hidden">
+  <ion-toggle></ion-toggle>
+  <ion-segment>
+    <ion-segment-button value="friends">
+    </ion-segment-button>
+    <ion-segment-button value="enemies">
+    </ion-segment-button>
+  </ion-segment>
+  <ion-popover/>
+  <ion-datetime id="render"/>
+  <ion-datetime-button datetime="render"/>
+</div>

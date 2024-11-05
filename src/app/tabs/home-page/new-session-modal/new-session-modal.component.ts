@@ -53,10 +53,12 @@ export class NewSessionModalComponent implements OnInit {
       blinds: new FormControl<[number, number] |  undefined>(this.newSessionService.getBlinds()),
       defaultBuyIn: new FormControl<number>(this.newSessionService.getDefaultBuyIn()),
       sessionComplete: new FormControl<boolean>(false),
-      players: new FormControl<SessionPlayerModel[]>(this.newSessionService.getSessionPlayers()),
       startDateTime: new FormControl<string>(new Date().toISOString()),
+      endDateTime: new FormControl<string>(new Date().toISOString()),
+      players: new FormControl<SessionPlayerModel[]>(this.newSessionService.getSessionPlayers()),
 
     });
+    console.log(this.newSessionForm.get('sessionComplete')!.value);
 
     // set subscription to each form control
     const blindsSubscription = this.newSessionForm.get('blinds')!.valueChanges.subscribe((blinds) => {
@@ -82,20 +84,14 @@ export class NewSessionModalComponent implements OnInit {
     })
 
   }
+
+  onSaveClick() {
+    console.log(this.newSessionForm.value);
+  }
+
   onCancelClick() {
     this.oncancel.emit();
   }
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

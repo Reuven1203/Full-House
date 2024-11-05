@@ -17,6 +17,10 @@ ion-datetime::part(wheel-item) {
   color: var(--ion-color-dark);
   border-radius: 8px; /* Customize border radius, if needed */
 }
+//
+ion-modal.date-picker {
+  --height: auto;
+}
 
 
 

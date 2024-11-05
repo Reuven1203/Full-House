@@ -17,28 +17,30 @@
     </ion-item>
 
 @if(FormGroup.get('sessionComplete')?.value){
-  <ion-item>
+  <ion-item (click)="onDateItemClick('startDateTime')">
     <ion-label>Start Date</ion-label>
-    <ion-datetime-button color="secondary"  slot="end" datetime="startDateTime"  ></ion-datetime-button>
-    <ion-modal [keepContentsMounted]="true" >
-      <ng-template>
-        <ion-datetime [preferWheel]="true" [value]="startDateTime" id="startDateTime" ></ion-datetime>
-      </ng-template>
-    </ion-modal>
+    <ion-datetime-button  color="secondary"  slot="end" datetime="startDateTime"  ></ion-datetime-button>
   </ion-item>
-  <ion-item>
+  <ion-item (click)="onDateItemClick('endDateTime')">
     <ion-label>End Date</ion-label>
     <ion-datetime-button color="secondary"  slot="end" datetime="endDateTime"  ></ion-datetime-button>
-    <ion-modal [keepContentsMounted]="true" >
-      <ng-template>
-<!--        <ion-datetime [preferWheel]="true" [value]="endDateTime" id="endDateTime" ></ion-datetime>-->
-      </ng-template>
-    </ion-modal>
   </ion-item>
 }
   </ion-list>
 
 </form>
+
+<ion-modal #startDateModal class="date-picker" [initialBreakpoint]="1" [breakpoints]="[0,1]"  [keepContentsMounted]="true" >
+  <ng-template>
+    <ion-datetime [value]="startDateTime" (ionChange)="onDateChange($event, 'startDateTime')" [max]="maxDate"  [preferWheel]="true" id="startDateTime" ></ion-datetime>
+  </ng-template>
+</ion-modal>
+
+<ion-modal #endDateModal class="date-picker"   [initialBreakpoint]="1" [breakpoints]="[0,1]"  [keepContentsMounted]="true" >
+  <ng-template>
+    <ion-datetime [min]="startDateTime" (ionChange)="onDateChange($event, 'endDateTime')"  [max]="maxDate" [preferWheel]="true"  id="endDateTime" ></ion-datetime>
+  </ng-template>
+</ion-modal>
 
 <ion-modal #modal [presentingElement]="presentingElement" [backdropDismiss]="true"  trigger="openModal">
   <ng-template>
