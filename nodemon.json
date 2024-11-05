@@ -1,0 +1,6 @@
+{
+  "watch": ["src/"],
+  "ext": "js,ts,html,css",
+  "ignore": ["ios/*", "node_modules/*"],
+  "exec": "ionic cap sync ios"
+}

@@ -14,14 +14,20 @@ export class LeagueService {
 
 
   constructor() {
-    this.initializeLeaguePlayers();
+    this.initializeLeaguePlayers().then(
+      () => console.log("League players initialized form league service")
+
+    )
+
   }
 
 
-  initializeLeaguePlayers() {
-    this.database.getAllLeaguePlayers().then(players => {
-      this.leaguePlayersSubject.next(players);
-    });
+
+
+  async initializeLeaguePlayers() {
+    const result = await this.database.getAllLeaguePlayers();
+    console.log("result of league players in service", result);
+    this.leaguePlayersSubject.next(result.values || []);
   }
 
 
@@ -58,7 +64,6 @@ export class LeagueService {
   }
 
   getPlayerInfo(playerId: string) {
-    console.log(this.leaguePlayersSubject.value);
     return this.leaguePlayersSubject.value.find(player => player.id === playerId);
   }
 

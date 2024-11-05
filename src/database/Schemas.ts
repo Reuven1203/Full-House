@@ -1,13 +1,13 @@
 // schema.ts
 
-const LEAGUES_TABLE = `
+export const LEAGUES_TABLE = `
 CREATE TABLE IF NOT EXISTS leagues (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL
 );
 `;
 
-const PLAYERS_TABLE = `
+export const PLAYERS_TABLE = `
 CREATE TABLE IF NOT EXISTS players (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS players (
 );
 `;
 
-const LEAGUE_PLAYERS_TABLE = `
+export const LEAGUE_PLAYERS_TABLE = `
 CREATE TABLE IF NOT EXISTS league_players (
     league_id TEXT NOT NULL,
     player_id TEXT NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS league_players (
 );
 `;
 
-const SESSIONS_TABLE = `
+export const SESSIONS_TABLE = `
 CREATE TABLE IF NOT EXISTS sessions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     league_id TEXT NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 `;
 
-const CASH_GAMES_TABLE = `
+export const CASH_GAMES_TABLE = `
 CREATE TABLE IF NOT EXISTS cash_games (
     session_id TEXT PRIMARY KEY,
     blinds_id INTEGER NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS cash_games (
 );
 `;
 
-const CASHGAME_WITHDRAW_RECORDS_TABLE = `
+export const CASHGAME_WITHDRAW_RECORDS_TABLE = `
 CREATE TABLE IF NOT EXISTS cashgame_withdraw_records (
     session_id TEXT NOT NULL,
     player_id TEXT NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS cashgame_withdraw_records (
 );
 `;
 
-const BLINDS_TABLE = `
+export const BLINDS_TABLE = `
 CREATE TABLE IF NOT EXISTS blinds (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     league_id TEXT NOT NULL,
