@@ -1,4 +1,4 @@
-import {Component, inject, ViewChild} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -13,7 +13,6 @@ import { ExploreContainerComponent } from '../../explore-container/explore-conta
 import {SessionsComponent} from "./sessions/sessions.component";
 import {NewSessionModalComponent} from "./new-session-modal/new-session-modal.component";
 import {ComponentPreloadService} from "../../core/services/component-preload.service";
-import {DatabaseService} from "../../../database/database.service";
 
 @Component({
   selector: 'app-home-page',

@@ -2,14 +2,10 @@ import { Injectable } from '@angular/core';
 import {CapacitorSQLite, DBSQLiteValues, SQLiteConnection, SQLiteDBConnection} from '@capacitor-community/sqlite';
 import { PlayerModel } from "../app/core/models/player.model";
 import { BehaviorSubject, Observable } from 'rxjs';
-import {ALL_SCHEMAS, LEAGUE_PLAYERS_TABLE, LEAGUES_TABLE, PLAYERS_TABLE, STARTING_BLINDS} from "./Schemas";
+import {ALL_SCHEMAS, STARTING_BLINDS} from "./Schemas";
 import {Capacitor} from "@capacitor/core";
 
 const DB_NAME = "pokerleaguedb";
-
-interface JeepSqliteComponent extends HTMLElement {
-  initWebStore: () => Promise<void>;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -40,13 +36,27 @@ export class DatabaseService {
       throw error;
     }
   }
+
+  async execute(query: string): Promise<any> {
+    const result = await this.db.execute(query);
+    await this.autoSave();
+    return result;
+  }
+
+  async autoSave(): Promise<void> {
+    if (Capacitor.getPlatform() === 'web') {
+      await this.sqlite.saveToStore(DB_NAME);  // Save to IndexedDB
+      console.log("Database saved to store");
+    }
+  }
+
   async initializeSchemas(): Promise<void> {
     try {
       // check if schemas are already created
         const tables = await this.db.query(`SELECT name FROM sqlite_master WHERE type='table'`);
         if (tables.values?.length === 0) {
             console.log("No tables found. Initializing schemas...");
-            await this.db.execute(ALL_SCHEMAS);
+            await this.execute(ALL_SCHEMAS);
             await this.createDefaultLeague();
             await this.initializeBlinds();
         }
@@ -74,7 +84,7 @@ export class DatabaseService {
         INSERT INTO leagues (id, name)
         VALUES (1, 'My Poker League')
       `;
-        await this.db.execute(insertLeagueQuery);
+        await this.execute(insertLeagueQuery);
         console.log("Default league created with id 1 and name 'My Poker League'");
       } else {
         console.log("League with id 1 already exists", leagueCheck.values);
@@ -131,7 +141,7 @@ export class DatabaseService {
   }
 
   private async initializeDatabase(): Promise<void> {
-    await this.db.execute(ALL_SCHEMAS)
+    await this.execute(ALL_SCHEMAS)
   }
 
   async saveDatabaseToStore(): Promise<void> {
@@ -149,7 +159,7 @@ export class DatabaseService {
     try {
       const result = await this.getAllLeaguePlayers()
       if(!result){
-        throw new Error("Failed to load players");
+        console.warn("No players found");
       }
       this.playersSubject.next(result.values || []);
       console.log("Loaded players:", result);
@@ -178,35 +188,43 @@ export class DatabaseService {
   async addPlayer(player: Omit<PlayerModel, 'id'>): Promise<PlayerModel> {
     try {
       const { name, email = null, phone = null, avatar = null } = player;
-
       const playerQuery = `
       INSERT INTO players (name, email, phone, avatar)
       VALUES ("${name}", ${email ? `"${email}"` : "NULL"}, ${phone ? `"${phone}"` : "NULL"}, ${avatar ? `"${avatar}"` : "NULL"})
-    `;
-      const success = await this.db.execute(playerQuery);
+      `;
+      const success = await this.execute(playerQuery);
+
       if (!success.changes) {
         throw new Error("Failed to add player");
       }
+
       const result = await this.db.query(`SELECT * FROM players ORDER BY id DESC LIMIT 1`);
       console.log("New player:", result.values);
+
       if (!result.values || result.values.length === 0) {
-        throw new Error("Failed to retrieve the newly added player");
+        throw new Error("Failed to add player");
       }
 
       const newPlayer = result.values[0];
       const playerId = newPlayer.id;
       console.log("New player ID:", playerId);
+
       await this.addPlayerToLeague(playerId);
+
       if (Capacitor.getPlatform() === 'web') {
         await this.sqlite.saveToStore(DB_NAME);  // Save to IndexedDB
         console.log("Database saved to store");
       }
+
       return newPlayer;
-    } catch (error) {
+
+    } catch (error : any) {
       console.error("Failed to add player:", error);
       throw error;
     }
   }
+
+
 
   async addPlayerToLeague(playerId: string, leagueId = 1): Promise<void> {
     try {
@@ -214,7 +232,7 @@ export class DatabaseService {
         INSERT INTO league_players (league_id, player_id)
         VALUES ("${leagueId}", "${playerId}")
       `;
-      const changes = await this.db.execute(query);
+      const changes = await this.execute(query);
       if (!changes.changes) {
         throw new Error("Failed to add player to league");
       }
@@ -233,7 +251,7 @@ export class DatabaseService {
         SET name="${name}", email="${email}", phone="${phone}", avatar="${avatar}"
         WHERE id="${id}"
       `;
-      await this.db.execute(query);
+      await this.execute(query);
       await this.loadPlayers();
     } catch (error) {
       console.error("Failed to update player:", error);
@@ -244,7 +262,7 @@ export class DatabaseService {
   async removePlayerById(id: string): Promise<void> {
     try {
       const query = `DELETE FROM players WHERE id="${id}"`;
-      await this.db.execute(query);
+      await this.execute(query);
       await this.loadPlayers(); // Refresh player list
     } catch (error) {
       console.error("Failed to delete player:", error);
@@ -281,13 +299,13 @@ export class DatabaseService {
 
   dropAllTables = async () => {
     try {
-      await this.db.execute(`DROP TABLE IF EXISTS league_players`);
-      await this.db.execute(`DROP TABLE IF EXISTS players`);
-      await this.db.execute(`DROP TABLE IF EXISTS leagues`);
-      await this.db.execute(`DROP TABLE IF EXISTS sessions`);
-      await this.db.execute(`DROP TABLE IF EXISTS cash_games`);
-      await this.db.execute(`DROP TABLE IF EXISTS cashgame_withdraw_records`);
-      await this.db.execute(`DROP TABLE IF EXISTS blinds`);
+      await this.execute(`DROP TABLE IF EXISTS league_players`);
+      await this.execute(`DROP TABLE IF EXISTS players`);
+      await this.execute(`DROP TABLE IF EXISTS leagues`);
+      await this.execute(`DROP TABLE IF EXISTS sessions`);
+      await this.execute(`DROP TABLE IF EXISTS cash_games`);
+      await this.execute(`DROP TABLE IF EXISTS cashgame_withdraw_records`);
+      await this.execute(`DROP TABLE IF EXISTS blinds`);
       console.log("All tables dropped");
 
 
@@ -299,7 +317,7 @@ export class DatabaseService {
 
   initializeBlinds = async () => {
     try{
-      await this.db.execute(STARTING_BLINDS)
+      await this.execute(STARTING_BLINDS)
     }catch (error) {
       console.error("Failed to initialize blinds:", error);
       throw error;
