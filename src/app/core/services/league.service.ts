@@ -2,6 +2,7 @@ import {DestroyRef, inject, Injectable} from "@angular/core";
 import {BehaviorSubject} from "rxjs";
 import {DatabaseService} from "../../../database/database.service";
 import {PlayerModel} from "../models/player.model";
+import {LeagueBlindModel, LeagueInfoModel} from "../models/league.model";
 
 @Injectable({
   providedIn: 'root'
@@ -10,13 +11,19 @@ import {PlayerModel} from "../models/player.model";
 export class LeagueService {
   private destroyRef = inject(DestroyRef);
   private database = inject(DatabaseService);
+  private leagueInfoSubject = new BehaviorSubject<LeagueInfoModel>({id: null, name: null});
+  leagueInfo$ = this.leagueInfoSubject.asObservable();
   private leaguePlayersSubject = new BehaviorSubject<PlayerModel[]>([]);
   leaguePlayers$ = this.leaguePlayersSubject.asObservable();
-  private leagueBlindsSubject = new BehaviorSubject<{id:string, blinds:[number, number], defaultBuyIn: number}[]>([]);
+  private leagueBlindsSubject = new BehaviorSubject<LeagueBlindModel[]>([]);
   leagueBlinds$ = this.leagueBlindsSubject.asObservable();
 
 
   constructor() {
+    const leagueInfoSubscription = this.database.leagueInfo$.subscribe((leagueInfo) => {
+      this.leagueInfoSubject.next(leagueInfo);
+    })
+
     const playersSubscription = this.database.players$.subscribe((players) => {
       this.leaguePlayersSubject.next(players);
     });
@@ -24,14 +31,16 @@ export class LeagueService {
       this.leagueBlindsSubject.next(blinds);
     })
     this.destroyRef.onDestroy(() => {
+      leagueInfoSubscription.unsubscribe();
       playersSubscription.unsubscribe();
       blindsSubscription.unsubscribe();
     });
   }
 
 
-
-
+  getLeagueInfo() {
+    return this.leagueInfoSubject.value;
+  }
 
 
   getAllLeaguePlayers() {

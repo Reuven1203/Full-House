@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import { Component, inject, OnInit, ViewChild} from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -13,6 +13,8 @@ import { ExploreContainerComponent } from '../../explore-container/explore-conta
 import {SessionsComponent} from "./sessions/sessions.component";
 import {NewSessionModalComponent} from "./new-session-modal/new-session-modal.component";
 import {ComponentPreloadService} from "../../core/services/component-preload.service";
+import {LeagueService} from "../../core/services/league.service";
+import {LeagueInfoModel} from "../../core/models/league.model";
 
 @Component({
   selector: 'app-home-page',
@@ -21,8 +23,19 @@ import {ComponentPreloadService} from "../../core/services/component-preload.ser
   standalone: true,
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, ExploreContainerComponent, SessionsComponent, IonButton, IonNav, IonModal, NewSessionModalComponent, IonToggle, IonSegment, IonSegmentButton, IonPopover, IonDatetime, IonDatetimeButton]
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit  {
   @ViewChild(IonModal) modal: IonModal | undefined;
+  private leagueService = inject(LeagueService);
+  leagueInfo!: LeagueInfoModel;
+
+ngOnInit() {
+    this.leagueService.leagueInfo$.subscribe((leagueInfo) => {
+      this.leagueInfo = leagueInfo;
+    });
+  }
+
+
+
   closeModal() {
     // this.modalOpen.set(false)
     this.modal?.dismiss(null, 'cancel')
@@ -33,5 +46,6 @@ export class HomeComponent {
   constructor(private preloadService: ComponentPreloadService) {
     this.preloadService.initializeComponents();
   }
+
 
 }

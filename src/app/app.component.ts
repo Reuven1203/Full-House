@@ -10,7 +10,6 @@ import {
 } from '@ionic/angular/standalone';
 import {TabsComponent} from "./tabs/tabs.component";
 import {MainLayoutComponent} from "./layout/main-layout/main-layout.component";
-import {ComponentPreloadService} from "./core/services/component-preload.service";
 import {DatabaseService} from "../database/database.service";
 import {SplashScreen} from "@capacitor/splash-screen";
 import {NgIf} from "@angular/common";
@@ -34,7 +33,6 @@ export class AppComponent implements OnInit {
       }
     );
     await this.initApp();
-    await SplashScreen.hide();
     await App.addListener('appStateChange', async (state) => {
       if (state.isActive) {
         try {
@@ -45,6 +43,7 @@ export class AppComponent implements OnInit {
         }
       }
     });
+    await SplashScreen.hide();
   }
 
   async initApp() {

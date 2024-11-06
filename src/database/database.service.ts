@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {CapacitorSQLite, DBSQLiteValues, SQLiteConnection, SQLiteDBConnection} from '@capacitor-community/sqlite';
-import { PlayerModel } from "../app/core/models/player.model";
-import { BehaviorSubject, Observable } from 'rxjs';
+import {PlayerModel} from "../app/core/models/player.model";
+import {BehaviorSubject, Observable} from 'rxjs';
 import {ALL_SCHEMAS, STARTING_BLINDS} from "./Schemas";
 import {Capacitor} from "@capacitor/core";
+import {LeagueInfoModel} from "../app/core/models/league.model";
 
 const DB_NAME = "pokerleaguedb";
 
@@ -16,6 +17,8 @@ export class DatabaseService {
   private sqlite = new SQLiteConnection(CapacitorSQLite);
   private db!: SQLiteDBConnection;
   private platform = Capacitor.getPlatform();
+  private leagueSubject = new BehaviorSubject<LeagueInfoModel>({id: '', name: ''});
+  leagueInfo$: Observable<LeagueInfoModel> = this.leagueSubject.asObservable();
   private playersSubject = new BehaviorSubject<PlayerModel[]>([]);
   players$: Observable<PlayerModel[]> = this.playersSubject.asObservable();
   private blindsSubject = new BehaviorSubject<{id:string, blinds: [number, number], defaultBuyIn: number}[]>([]);
@@ -32,8 +35,7 @@ export class DatabaseService {
       await this.listTables();
       console.log('league table contents');
       await this.viewTableContents('leagues');
-      await this.loadPlayers();
-      await this.loadBlinds();
+      await this.loadAllData();
       await this.saveDatabaseToStore();
     } catch (error) {
       console.error("Failed to initialize plugin:", error);
@@ -51,6 +53,17 @@ export class DatabaseService {
     if (Capacitor.getPlatform() === 'web') {
       await this.sqlite.saveToStore(DB_NAME);  // Save to IndexedDB
       console.log("Database saved to store");
+    }
+  }
+
+  private async loadAllData(): Promise<void> {
+    try {
+      await this.loadLeagueInfo();
+      await this.loadPlayers();
+      await this.loadBlinds()
+    }catch (error) {
+      console.error("Failed to load all data:", error);
+      throw error;
     }
   }
 
@@ -75,6 +88,19 @@ export class DatabaseService {
       throw error;
     }
 
+  }
+
+  private async getLeagueInfo() : Promise<LeagueInfoModel> {
+    try {
+      const result = await this.db.query(`SELECT * FROM leagues WHERE id = 1`);
+      if (!result.values || result.values.length === 0) {
+        throw new Error("Failed to get league info");
+      }
+      return result.values[0];
+    } catch (error) {
+      console.error("Failed to get league info:", error);
+      throw error;
+    }
   }
 
   private async createDefaultLeague(): Promise<void> {
@@ -102,6 +128,8 @@ export class DatabaseService {
     const tables = await this.db.query(`SELECT name FROM sqlite_master WHERE type='table'`);
     console.log("Existing tables:", tables.values);
   }
+
+
 
   private async initWebStore(): Promise<void> {
     // Ensure the `jeep-sqlite` element is in the DOM
@@ -133,7 +161,7 @@ export class DatabaseService {
       const isOpen = await this.db.isDBOpen();
         if(isOpen.result){
             console.log(">> Database is already open");
-            return;
+            return ;
         }else {
           console.log(">> Opening database");
             await this.db.open();
@@ -167,6 +195,17 @@ export class DatabaseService {
       console.log("Loaded players:", result);
     } catch (error) {
       console.error("Failed to load players:", error);
+      throw error; // Propagate the error
+    }
+  }
+
+  private async loadLeagueInfo(): Promise<void> {
+    try {
+      const result = await this.getLeagueInfo();
+      console.log("Loaded league info:", result);
+      this.leagueSubject.next(result);
+    } catch (error) {
+      console.error("Failed to load league info:", error);
       throw error; // Propagate the error
     }
   }
