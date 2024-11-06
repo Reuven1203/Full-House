@@ -1,4 +1,4 @@
-import {Component, computed, Input, OnChanges, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {IonicModule} from "@ionic/angular";
 import {dummyPlayers} from "../../../../../dummyPlayers";
 import {CurrencyPipe} from "@angular/common";
@@ -35,7 +35,6 @@ export class PlayerSessionInfoComponent implements OnInit {
 
   buyInChanged(value: number | null) {
     this.buyIn = value || 0;
-    console.log(this.buyIn)
   }
 
   cashOutChanged(value: number | null) {

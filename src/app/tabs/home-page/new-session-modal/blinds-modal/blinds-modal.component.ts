@@ -21,7 +21,7 @@ import {BaseModalComponent} from "../../../../shared/components/base-modal/base-
 
 export class BlindsModalComponent extends BaseModalComponent implements OnInit {
   @Input() blinds?:{ id:string, blinds: [number, number]}[];
-  @Output() blindsSelected = new EventEmitter<[number, number]>();
+  @Output() blindsSelected = new EventEmitter<{id:string, blinds:[number, number]}>();
   private newSessionService = inject(NewSessionService);
   selectedBlinds!: [number, number];
   private destroyRef = inject(DestroyRef);
@@ -32,19 +32,18 @@ export class BlindsModalComponent extends BaseModalComponent implements OnInit {
 
 
   ngOnInit() {
-    this.selectedBlinds = this.newSessionService.getBlinds();
+    this.selectedBlinds = this.newSessionService.getBlinds().blinds;
     const subscription = this.newSessionService.blinds$.subscribe((blinds) => {
-      this.selectedBlinds = blinds;
+      this.selectedBlinds = blinds.blinds;
     })
 
     this.destroyRef.onDestroy(() => {
       subscription.unsubscribe();
     })
-
   }
 
-  onBlindsSelected(blinds: [number, number]) {
-    this.blindsSelected.emit(blinds);
+  onBlindsSelected(id: string, blinds: [number, number]) {
+    this.blindsSelected.emit({id:id, blinds: blinds});
     this.oncancel.emit();
   }
 

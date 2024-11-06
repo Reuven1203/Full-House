@@ -7,19 +7,44 @@ import {SessionPlayerModel} from "../models/session.model";
   providedIn: 'root'
 })
 export class NewSessionService {
+  private leagueService = inject(LeagueService);
+
   // Individual BehaviorSubjects for each form field
   // TODO: Once sessions are dealt with in database, default starting blinds should be from the last session
-  private blindsSubject = new BehaviorSubject<[number, number]>([0.25, 0.5]);
+  private blindsSubject = new BehaviorSubject<{ id: string, blinds: [number, number] }>({
+    id: '', blinds: [0, 0]
+  });
   blinds$ = this.blindsSubject.asObservable();  // Observable for blinds
   private defaultBuyInSubject = new BehaviorSubject<number>(100);
   defaultBuyIn$ = this.defaultBuyInSubject.asObservable();  // Observable for defaultBuyIn
   private sessionPlayersSubject = new BehaviorSubject<SessionPlayerModel[]>([]);
   sessionPlayers$ = this.sessionPlayersSubject.asObservable();  // Observable for
 
-  private leagueService = inject(LeagueService);
 
 
-  constructor() {}
+  constructor() {
+    this.initializeBlinds()
+  }
+  private  initializeBlinds() {
+    try {
+      const blinds = this.leagueService.getLeagueBlinds();
+      if (blinds.length > 0) {
+        this.setBlinds(blinds[0]);
+      }
+    } catch (error) {
+      console.error('Failed to initialize blinds:', error);
+    }
+  }
+
+  getDefaultBuyInFromBlinds(blindId: string) {
+    const info = this.leagueService.getBlindsInfo()
+    const blind = info.find(blind => blind.id === blindId);
+    if(blind) {
+      return blind.defaultBuyIn;
+    }else {
+      return 100;
+  }
+    }
 
 
   // Blinds
@@ -27,9 +52,13 @@ export class NewSessionService {
     return this.blindsSubject.value;
   }
 
-  setBlinds(newBlinds: [number, number]) {
-    this.blindsSubject.next(newBlinds);
+  setBlinds(blinds: {id:string, blinds: [number, number]}) {
+    this.blindsSubject.next(blinds);
+  //   set the default buy in to the default buy in of the blinds
+    this.setDefaultBuyIn(this.getDefaultBuyInFromBlinds(blinds.id));
   }
+
+
 
   // Default Buy In
   getDefaultBuyIn() {
@@ -37,16 +66,9 @@ export class NewSessionService {
   }
 
   setDefaultBuyIn(newDefaultBuyIn: number) {
-    // this.defaultBuyInSubject.next(newDefaultBuyIn);
-    //
-    // // Update the buy-in for each session player
-    // const updatedPlayers = this.sessionPlayersSubject.value.map(player => ({
-    //   playerId: player.playerId,
-    //   buyIn: newDefaultBuyIn
-    // }));
-    //
-    // this.sessionPlayersSubject.next(updatedPlayers); // Set the updated players array
+    this.defaultBuyInSubject.next(newDefaultBuyIn);
   }
+
 
   getSessionPlayers() {
   //   bind players id from the league players

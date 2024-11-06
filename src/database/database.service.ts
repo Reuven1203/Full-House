@@ -18,6 +18,9 @@ export class DatabaseService {
   private platform = Capacitor.getPlatform();
   private playersSubject = new BehaviorSubject<PlayerModel[]>([]);
   players$: Observable<PlayerModel[]> = this.playersSubject.asObservable();
+  private blindsSubject = new BehaviorSubject<{id:string, blinds: [number, number], defaultBuyIn: number}[]>([]);
+  blinds$ = this.blindsSubject.asObservable();
+
 
   async initializePlugin(): Promise<void> {
     if (this.platform === 'web') {
@@ -30,6 +33,7 @@ export class DatabaseService {
       console.log('league table contents');
       await this.viewTableContents('leagues');
       await this.loadPlayers();
+      await this.loadBlinds();
       await this.saveDatabaseToStore();
     } catch (error) {
       console.error("Failed to initialize plugin:", error);
@@ -37,20 +41,20 @@ export class DatabaseService {
     }
   }
 
-  async execute(query: string): Promise<any> {
+  private async execute(query: string): Promise<any> {
     const result = await this.db.execute(query);
     await this.autoSave();
     return result;
   }
 
-  async autoSave(): Promise<void> {
+ private  async autoSave(): Promise<void> {
     if (Capacitor.getPlatform() === 'web') {
       await this.sqlite.saveToStore(DB_NAME);  // Save to IndexedDB
       console.log("Database saved to store");
     }
   }
 
-  async initializeSchemas(): Promise<void> {
+  private async initializeSchemas(): Promise<void> {
     try {
       // check if schemas are already created
         const tables = await this.db.query(`SELECT name FROM sqlite_master WHERE type='table'`);
@@ -73,7 +77,7 @@ export class DatabaseService {
 
   }
 
-  async createDefaultLeague(): Promise<void> {
+  private async createDefaultLeague(): Promise<void> {
     try {
       // Check if the league with id 1 already exists
       const leagueCheck = await this.db.query(`SELECT * FROM leagues WHERE id = 1`);
@@ -144,14 +148,12 @@ export class DatabaseService {
     await this.execute(ALL_SCHEMAS)
   }
 
-  async saveDatabaseToStore(): Promise<void> {
+  private async saveDatabaseToStore(): Promise<void> {
     if (Capacitor.getPlatform() === 'web') {
       await this.sqlite.saveToStore(DB_NAME);  // Save to IndexedDB
       console.log("Database saved to store");
     }
   }
-
-
 
 
   private async loadPlayers(): Promise<void> {
@@ -169,7 +171,7 @@ export class DatabaseService {
     }
   }
 
-  async getAllLeaguePlayers(leagueId = 1): Promise<DBSQLiteValues> {
+  private async getAllLeaguePlayers(leagueId = 1): Promise<DBSQLiteValues> {
     try {
       const result = await this.db.query(`
       SELECT p.id, p.name, p.email, p.phone, p.avatar
@@ -226,7 +228,7 @@ export class DatabaseService {
 
 
 
-  async addPlayerToLeague(playerId: string, leagueId = 1): Promise<void> {
+  private async addPlayerToLeague(playerId: string, leagueId = 1): Promise<void> {
     try {
       const query = `
         INSERT INTO league_players (league_id, player_id)
@@ -270,12 +272,31 @@ export class DatabaseService {
     }
   }
 
-  async getLeagueBlinds(leagueID = 1): Promise<any> {
+
+ private async getLeagueBlinds(leagueID = 1): Promise<any> {
     try {
-      const result = await this.db.query(`SELECT id, blinds_low, blinds_high FROM blinds WHERE league_id = "${leagueID}"`);
+      const result = await this.db.query(`SELECT id, blinds_low, blinds_high, default_buy_in FROM blinds WHERE league_id = "${leagueID}"`);
       return result.values || [];
     } catch (error) {
       console.error("Failed to get blinds:", error);
+      throw error;
+    }
+  }
+
+  private async loadBlinds(): Promise<void> {
+    try {
+      const result = await this.getLeagueBlinds();
+      const mappedDate = result.map((blind: any) => {
+        return {
+          id: blind.id,
+          blinds: [blind.blinds_low, blind.blinds_high],
+          defaultBuyIn: blind.default_buy_in
+        };
+      })
+      console.log("Loaded blinds:", mappedDate);
+      this.blindsSubject.next(mappedDate);
+    } catch (error) {
+      console.error("Failed to load blinds:", error);
       throw error;
     }
   }

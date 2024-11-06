@@ -2,21 +2,21 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, ElementRef,
+  Component, DestroyRef,
   inject,
-  Input,
   OnInit,
   ViewChild
 } from '@angular/core';
 import {BlindsPipe} from "../../../../core/pipes/blinds.pipe";
 import {IonicModule, IonModal} from "@ionic/angular";
-import {FormGroup, ReactiveFormsModule} from "@angular/forms";
+import { ReactiveFormsModule} from "@angular/forms";
 import {
     ValueChipComponent
 } from "../../sessions/session/session-info/player-session-info/value-chip/value-chip.component";
 import {BlindsModalComponent} from "../blinds-modal/blinds-modal.component";
 import {BaseModalFormComponent} from "../../../../shared/components/base-modal/base-modal-form.component";
 import {LeagueService} from "../../../../core/services/league.service";
+import {NewSessionService} from "../../../../core/services/newSession.service";
 
 @Component({
     selector: 'app-game-info-form',
@@ -37,8 +37,11 @@ export class GameInfoFormComponent extends BaseModalFormComponent implements OnI
   @ViewChild('startDateModal', { static: false }) startDateModal!: IonModal;
   @ViewChild('endDateModal', { static: false }) endDateModal!: IonModal;
   private leagueService = inject(LeagueService);
+  private newSessionService = inject(NewSessionService);
   leagueBlinds!: {id:string, blinds: [number, number]}[];
   maxDate!:string;
+  private destroyRef = inject(DestroyRef);
+
 
 
   constructor(private cdr: ChangeDetectorRef) {
@@ -47,8 +50,15 @@ export class GameInfoFormComponent extends BaseModalFormComponent implements OnI
 
   override async ngOnInit() {
     super.ngOnInit();
-    this.leagueBlinds = await this.leagueService.getLeagueBlinds();
+    this.leagueBlinds = this.leagueService.getLeagueBlinds();
     this.maxDate = new Date().toISOString().split('T')[0];
+    const defaultBuyInSubscription = this.newSessionService.defaultBuyIn$.subscribe((defaultBuyIn) => {
+      this.FormGroup.get('defaultBuyIn')?.patchValue(defaultBuyIn);
+    })
+
+    this.destroyRef.onDestroy(() => {
+      defaultBuyInSubscription.unsubscribe();
+    })
 
   }
 
@@ -70,7 +80,7 @@ export class GameInfoFormComponent extends BaseModalFormComponent implements OnI
     inputElement.setSelectionRange(length, length);
   }
 
-  onBlindsSelected(blinds: [number, number]) {
+  onBlindsSelected(blinds:{id:string, blinds: [number, number]}) {
     this.FormGroup.patchValue({ blinds });
   }
 
@@ -80,7 +90,7 @@ export class GameInfoFormComponent extends BaseModalFormComponent implements OnI
   }
 
   get blinds(): [number, number]  {
-    const blindsValue = this.FormGroup.get('blinds')?.value;
+    const blindsValue = this.FormGroup.get('blinds')?.value.blinds;
     return  blindsValue as [number, number];
 
   }

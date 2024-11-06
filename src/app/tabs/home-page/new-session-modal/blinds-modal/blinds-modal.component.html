@@ -9,7 +9,7 @@
       <app-blinds-selection  [ngClass]="{
     'first-item-class': isFirst,
     'last-item-class': isLast,
-  }"  [selected]="blindsAreEqual(blind.blinds, selectedBlinds)" [blinds]="blind.blinds" (click)="onBlindsSelected(blind.blinds)"/>
+  }"  [selected]="blindsAreEqual(blind.blinds, selectedBlinds)" [blinds]="blind.blinds" (click)="onBlindsSelected(blind.id, blind.blinds)"/>
     }
   </ion-list>
 

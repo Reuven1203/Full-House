@@ -1,18 +1,14 @@
 import {
-  AfterViewInit, ChangeDetectorRef,
   Component,
   DestroyRef,
   EventEmitter,
   inject,
-  model,
   OnInit,
   Output,
-  ViewChild
 } from '@angular/core';
 import {IonicModule} from "@ionic/angular";
 import {BlindsModalComponent} from "./blinds-modal/blinds-modal.component";
-import {IonModal} from "@ionic/angular/standalone";
-import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
+import { FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {BlindsPipe} from "../../../core/pipes/blinds.pipe";
 import {NewSessionService} from "../../../core/services/newSession.service";
 import {ValueChipComponent} from "../sessions/session/session-info/player-session-info/value-chip/value-chip.component";
@@ -50,7 +46,7 @@ export class NewSessionModalComponent implements OnInit {
   ngOnInit() {
 
     this.newSessionForm = new FormGroup({
-      blinds: new FormControl<[number, number] |  undefined>(this.newSessionService.getBlinds()),
+      blinds: new FormControl<{id:string, blinds:[number, number]}>(this.newSessionService.getBlinds()),
       defaultBuyIn: new FormControl<number>(this.newSessionService.getDefaultBuyIn()),
       sessionComplete: new FormControl<boolean>(false),
       startDateTime: new FormControl<string>(new Date().toISOString()),
@@ -58,11 +54,11 @@ export class NewSessionModalComponent implements OnInit {
       players: new FormControl<SessionPlayerModel[]>(this.newSessionService.getSessionPlayers()),
 
     });
-    console.log(this.newSessionForm.get('sessionComplete')!.value);
+
 
     // set subscription to each form control
     const blindsSubscription = this.newSessionForm.get('blinds')!.valueChanges.subscribe((blinds) => {
-      this.newSessionService.setBlinds(blinds);
+        this.newSessionService.setBlinds(blinds);
     }
     );
 
@@ -81,6 +77,7 @@ export class NewSessionModalComponent implements OnInit {
       blindsSubscription.unsubscribe();
       defaultBuyInSubscription.unsubscribe();
       playersSubscription.unsubscribe();
+      // blindsToDefaultBuyInSubscription.unsubscribe();
     })
 
   }

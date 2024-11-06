@@ -10,7 +10,6 @@ import {SessionPlayerComponent} from "./session-player/session-player.component"
 import {SessionPlayerModel} from "../../../../core/models/session.model";
 import {TooltipComponent} from "../../../../shared/components/tooltip/tooltip.component";
 import {caretUp, caretDown} from "ionicons/icons";
-import {LeagueService} from "../../../../core/services/league.service";
 
 @Component({
   selector: 'app-add-players-form',
@@ -31,12 +30,10 @@ export class AddPlayersFormComponent extends BaseModalFormComponent implements O
     super();
   }
   private newSessionService = inject(NewSessionService);
-  private leagueService = inject(LeagueService);
   sessionPlayers!: SessionPlayerModel[];
 
   override ngOnInit() {
     super.ngOnInit();
-    console.log('leagueService', this.leagueService.initializeLeaguePlayers());
     this.newSessionService.sessionPlayers$.subscribe((players) => {
       this.sessionPlayers = players;
     });
